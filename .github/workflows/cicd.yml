@@ -127,6 +127,8 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile
           tags: ${{ env.IMAGE_NAMESPACE }}/${{ env.BACKEND_IMAGE }}:${{ needs.docker_meta.outputs.short_sha }}
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
           outputs: type=docker,dest=/tmp/backend-image.tar
 
       - name: Build frontend image (export tar)
@@ -135,6 +137,8 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           tags: ${{ env.IMAGE_NAMESPACE }}/${{ env.FRONTEND_IMAGE }}:${{ needs.docker_meta.outputs.short_sha }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
           outputs: type=docker,dest=/tmp/frontend-image.tar
 
       - name: Upload built images
@@ -155,6 +159,14 @@ jobs:
       contents: read
       security-events: write
     steps:
+      - name: Cache Trivy DB
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/trivy
+          key: trivy-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            trivy-${{ runner.os }}-
+
       - name: Download built images
         uses: actions/download-artifact@v4
         with:
