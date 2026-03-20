@@ -19,6 +19,20 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 5001
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5001
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5001
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          failureThreshold: 3
         env:
         - name: MONGODB_URI
           value: "mongodb://root:admin@mongodb:27017/chatApp?authSource=admin"
