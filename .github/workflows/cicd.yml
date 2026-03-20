@@ -29,6 +29,10 @@ jobs:
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
+        with:
+          # Gitleaks needs commit history to evaluate the diff range.
+          # Without enough history (shallow clone), the commit range can be "unknown revision".
+          fetch-depth: 0
 
       - name: Secret scan (Gitleaks)
         uses: gitleaks/gitleaks-action@v2
