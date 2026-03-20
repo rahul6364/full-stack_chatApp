@@ -17,6 +17,8 @@ kind: Service
 metadata:
   name: mongodb
   namespace: chat-app
+  annotations:
+    argocd.argoproj.io/sync-options: Replace=true
 spec:
   clusterIP: None
   selector:
