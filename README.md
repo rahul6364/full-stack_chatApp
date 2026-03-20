@@ -323,10 +323,10 @@ Pipeline stages currently implemented:
 ### Current CD status for Kubernetes
 
 * **Implemented:** CI builds, scans, and publishes Docker images.
-* **Not implemented yet:** automated deployment from GitHub Actions to Kind/Kubernetes cluster.
-* **Not implemented yet:** ArgoCD GitOps sync in this repo.
+* **Implemented:** CI updates Kubernetes manifests in `k8s/` with the new immutable image tag (short SHA) so Git changes drive rollouts.
+* **Works with ArgoCD:** when ArgoCD auto-sync is enabled, it deploys the updated manifests to your Kind cluster.
 
-In other words: **CI is production-grade and active; Kubernetes CD automation is the next planned phase.**
+In other words: **CI image delivery is production-grade, and GitOps CD is enabled via ArgoCD syncing manifest changes.**
 
 ## Contributing
 
