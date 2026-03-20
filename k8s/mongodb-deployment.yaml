@@ -21,22 +21,22 @@ spec:
         startupProbe:
           tcpSocket:
             port: 27017
-          # Mongo init can take a bit on first run; allow ~60s total.
-          initialDelaySeconds: 5
-          periodSeconds: 2
-          failureThreshold: 30
+          # Mongo init can take a bit on first run; allow enough time before restarts.
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 40
         readinessProbe:
           tcpSocket:
             port: 27017
-          initialDelaySeconds: 10
+          initialDelaySeconds: 20
           periodSeconds: 10
           failureThreshold: 6
         livenessProbe:
           tcpSocket:
             port: 27017
-          initialDelaySeconds: 20
+          initialDelaySeconds: 60
           periodSeconds: 15
-          failureThreshold: 3
+          failureThreshold: 4
         env:
         - name: MONGO_INITDB_ROOT_USERNAME
           value: root

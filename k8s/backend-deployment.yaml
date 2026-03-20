@@ -15,24 +15,24 @@ spec:
     spec:
       containers:
       - name: backend
-        image: rahul6364/full-stack-chatapp-backend:fe4f490
+        image: rahul6364/full-stack-chatapp-backend:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 5001
         readinessProbe:
           httpGet:
-            path: /
+            path: /health
             port: 5001
           initialDelaySeconds: 20
           periodSeconds: 10
           failureThreshold: 3
         livenessProbe:
           httpGet:
-            path: /
+            path: /health
             port: 5001
-          initialDelaySeconds: 30
-          periodSeconds: 15
-          failureThreshold: 3
+          initialDelaySeconds: 60
+          periodSeconds: 20
+          failureThreshold: 5
         env:
         - name: MONGODB_URI
           value: "mongodb://root:admin@mongodb:27017/chatApp?authSource=admin"
