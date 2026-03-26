@@ -1,4 +1,262 @@
-[![Fork Button](https://img.shields.io/github/forks/iemafzalhassan/full-stack_chatApp?style=social)](https://github.com/iemafzalhassan/full-stack_chatApp/fork)
+<!-- [![Fork Button](https://img.shields.io/github/forks/iemafzalhassan/full-stack_chatApp?style=social)](https://github.com/iemafzalhassan/full-stack_chatApp/fork)
+
+
+# Real-Time Chat Application
+
+
+Welcome to the **Full Stack Realtime Chat App** project, where we're building a scalable and secure real-time chat experience using the latest technologies. Whether you're a seasoned developer or a beginner, we invite you to contribute and be a part of this exciting journey!
+
+## Table of Contents
+
+
+* [Introduction](#introduction)
+* [Features](#features)
+* [Tech Stack](#tech-stack)
+* [Getting Started](#getting-started)
+* [Building the Backend](#building-the-backend)
+* [Running the Application](#running-the-application)
+* [Contributing](#contributing)
+* [Future Plans](#future-plans)
+* [License](#license)
+
+## 📝 Introduction
+
+This project aims to provide a real-time chat experience that's both scalable and secure. With a focus on modern technologies, we're building an application that's easy to use and maintain.
+
+## Detailed Workflow Description:
+
+
+![image](https://github.com/user-attachments/assets/f845a188-8e70-42f7-8577-30af38e83053)
+
+
+  - **User Interaction:**
+    - Users interact with the frontend application running in their browser. This includes actions like logging in, sending messages, and navigating through the chat interface.Frontend (React App):The frontend is responsible for rendering the user interface and handling user inputs.It communicates with the backend via HTTP requests (for RESTful APIs) and WebSocket connections (for real-time interactions).
+
+    - **Backend (Node.js/Express + Socket.io):**
+       - The backend handles all the server-side logic.It processes API requests from the frontend to perform actions such as user authentication, message retrieval, and message storage.Socket.io is used to manage real-time bi-directional communication between the frontend and the backend. This allows for instant messaging features, such as showing when users are typing or when new messages are sent.
+
+
+    - **MongoDB (Database):**
+       - MongoDB stores all persistent data for the application, including user profiles, chat messages, and any other relevant data.The backend interacts with MongoDB to retrieve, add, update, or delete data based on the requests it receives from the frontend.
+
+## ✨ Features
+
+
+* **Real-time Messaging**: Send and receive messages instantly using Socket.io 
+* **User Authentication & Authorization**: Securely manage user access with JWT 
+* **Scalable & Secure Architecture**: Built to handle large volumes of traffic and data 
+* **Modern UI Design**: A user-friendly interface crafted with React and TailwindCSS 
+* **Profile Management**: Users can upload and update their profile pictures 
+* **Online Status**: View real-time online/offline status of users 
+
+
+## 🛠️ Tech Stack
+
+
+* **Backend:** Node.js, Express, MongoDB, Socket.io
+* **Frontend:** React, TailwindCSS
+* **Containerization:** Docker
+* **Orchestration:** Kubernetes (planned)
+* **Web Server:** Nginx
+* **State Management:** Zustand
+* **Authentication:** JWT
+* **Styling Components:** DaisyUI
+
+
+### 🔧 Prerequisites
+
+
+* **[Node.js](https://nodejs.org/)** (v14 or higher)
+* **[Docker](https://www.docker.com/get-started)** (for containerizing the app)
+* **[Git](https://git-scm.com/downloads)** (to clone the repository)
+
+
+### 📝 Environment Configuration
+
+Create a `.env` file in the root directory with the following configuration:
+
+```env
+# Database Configuration
+MONGODB_URI=mongodb://root:admin@mongo:27017/chatApp?authSource=admin&retryWrites=true&w=majority
+
+# JWT Configuration
+JWT_SECRET=your_jwt_secret_key
+
+# Server Configuration
+PORT=5001
+NODE_ENV=production
+```
+
+> **Note:** 
+> - Replace `your_jwt_secret_key` with a strong secret key
+> - For local development without Docker, change `MONGODB_URI` to `mongodb://localhost:27017/chatApp`
+> - You can use command ```echo "Text what you want" | base64
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/iemafzalhassan/full-stack_chatApp.git
+```
+
+🏗️ Build and Run the Application
+
+Follow these steps to build and run the application:
+
+1. Build & Run the Containers:
+
+```bash
+cd full-stack_chatApp
+```
+```bash
+docker-compose up -d --build
+```
+
+2. Access the application in your browser:
+
+```
+http://localhost
+```
+---
+
+## 🛠️ Getting Started
+
+Follow these simple steps to get the project up and running on your local Host using docker.
+
+```bash
+git clone https://github.com/iemafzalhassan/full-stack_chatApp.git
+```
+
+```bash
+cd full-stack_chatApp
+```
+## Create a Docker network:
+
+```bash
+docker network create full-stack
+```
+
+## 🛠️ Building the Frontend
+
+```bash
+cd frontend
+```
+
+```bash
+docker build -t full-stack_frontend .
+```
+
+### Run the Frontend container:
+
+```bash
+docker run -d --network=full-stack  -p 5173:5173 --name frontend full-stack_frontend:latest
+```
+#### The frontend will now be accessible on port 5173.
+
+
+## Run the MongoDB Container:
+
+```bash
+docker run -d -p 27017:27017 --name mongo mongo:latest
+```
+---
+
+## 🛠️ Building the Backend
+
+```bash
+cd backend
+```
+
+### Build the Backend image:
+
+```bash
+docker build -t full-stack_backend .
+```
+
+### Run the Backend container:
+
+```bash
+docker run -d --network=full-stack --add-host=host.docker.internal:host-gateway -p 5001:5001 --env-file .env full-stack_backend
+```
+#### This will build and run the backend container, exposing the backendAPI on port 5001.
+
+`Backend API: http://localhost:5001`
+
+### To Verify the conncetion between backend and databse:
+```bash
+docker-compose logs -f
+```
+
+### Once the backend and frontend containers are running, you can access the application in your browser:
+
+`Frontend: http://localhost`
+
+
+You can now interact with the real-time chat app and start messaging!
+
+---
+
+
+
+### 🤝 Contributing
+
+
+We welcome contributions from DevOps & Developer of all skill levels! Here's how you can contribute:
+
+**Report bugs:** If you encounter any bugs or issues, please open an issue with detailed information.
+**Suggest features:** Have an idea for a new feature? Open an issue to discuss it with the community.
+**Submit pull requests:** If you have a fix or a feature you'd like to contribute, submit a pull request. Ensure your changes pass any linting or tests, if applicable.
+
+### 🌐 Join the Community
+
+We invite you to join our community of developers and contributors. Let's work together to build an amazing real-time chat application!
+
+* **Star this repository** to show your support
+* **Fork this repository** to contribute to the project
+* **Open an issue** to report bugs or suggest features
+* **Submit a pull request** to contribute code changes
+
+## 🔮 Future Plans
+
+
+This project is evolving, and here are a few exciting things on the horizon:
+
+* [ ] **CI/CD Pipelines:** Implement Continuous Integration and Continuous Deployment pipelines to automate testing and deployment.
+* [ ] **Kubernetes (K8s):** Add Kubernetes manifests for container orchestration to deploy the app on cloud platforms like AWS, GCP, or Azure.
+* [ ] **Feature Expansion:** Add more features like group chats, media sharing, and user status updates.
+* **Stay tuned for updates as we continue to improve and expand this project!**
+
+---
+
+## 📚 Project Snapshots:
+
+![Settings](frontend/public/settings.png)
+
+![chat](frontend/public/chat.png)
+
+![logout](/frontend/public/logout.png)
+
+![Login](/frontend/public/login.png)
+
+
+
+## 📜 License
+
+
+This project is licensed under the MIT License. See the LICENSE file for more details.
+
+
+
+
+
+
+
+
+
+
+
+
+
+ -->
 
 # Real-Time Chat Application
 
@@ -44,6 +302,8 @@ This project provides a scalable and production-style chat application with:
 * **Orchestration:** Kubernetes (Kind + ingress-nginx)
 * **Web Server:** Nginx
 * **Authentication:** JWT + HTTP-only cookies
+* **GitOps / CD:** ArgoCD
+* **Tunneling (demo):** Ngrok
 
 ## Current Project Status
 
@@ -54,25 +314,36 @@ This project provides a scalable and production-style chat application with:
 * Kubernetes deployment on Kind works.
 * `ingress-nginx` is configured and routing traffic.
 * Host-based access is working through `chat-app.com`.
+* **MongoDB migrated from Deployment → StatefulSet** with a headless service (`clusterIP: None`) for stable DNS.
+* **Backend health endpoint** (`/health`) returns `503` when MongoDB is not connected, making K8s probes meaningful.
+* **Readiness + liveness probes** added to the backend deployment (HTTP GET `/health` on port 5001).
+* **Startup + readiness + liveness probes** added to MongoDB StatefulSet (TCP on port 27017).
+* **CI/CD pipeline** builds, scans, and publishes Docker images with immutable SHA tags.
+* **CI auto-updates K8s manifests** (`k8s/frontend-deployment.yaml`, `k8s/backend-deployment.yaml`) with the new image tag after each push.
+* **ArgoCD GitOps CD** is enabled — ArgoCD syncs manifest changes to the Kind cluster automatically.
+* **Ngrok tunneling** tested for public demo access without exposing ports directly.
+* **JWT secret debugging** resolved — empty secret caused 500 errors; fixed by recreating the Kubernetes secret with a properly generated value.
 
 ### Not implemented yet
 
-* End-to-end CI/CD pipeline.
-* ArgoCD deployment and GitOps sync.
+* Multi-replica MongoDB with replica set configuration.
 
 ## Project Structure
 
 * `frontend/` - React app + `frontend/Dockerfile`
 * `backend/` - API + socket server + auth
+  * `src/routes/health.route.js` - health check endpoint (Mongo-aware, returns 503 if not connected)
 * `k8s/` - Kubernetes manifests
   * `namespace.yaml` - creates `chat-app` namespace
-  * `mongo-pvc.yaml` - MongoDB PVC
-  * `mongodb-deployment.yaml`, `mongodb-service.yaml`
+  * `mongo-pvc.yaml` - MongoDB PVC (used by legacy Deployment; StatefulSet manages its own PVC via `volumeClaimTemplates`)
+  * `mongodb-statefullset.yaml` - **MongoDB StatefulSet** (replaces the old Deployment)
+  * `mongodb-service.yaml` - **Headless service** (`clusterIP: None`) for stable MongoDB DNS
   * `backend-secrets.yaml` - backend JWT secret
   * `backend-deployment.yaml`, `backend-service.yaml`
   * `frontend-configmap.yaml` - Nginx config for frontend container
   * `frontend-deployment.yaml`, `frontend-service.yaml`
   * `ingress.yaml` - host/path routing for app traffic
+* `.github/workflows/cicd.yml` - GitHub Actions CI/CD pipeline
 
 ## Environment Configuration
 
@@ -225,6 +496,29 @@ curl -v -H "Host: chat-app.com" http://127.0.0.1:8080/api/auth/check
 
 Open browser: `http://chat-app.com:8080/`.
 
+---
+
+## 🌐 Quick Public Demo with Ngrok
+
+Ngrok lets you expose your local Kind cluster to the internet without opening firewall ports — useful for demos and testing on real devices.
+
+### Step 1: Keep ingress port-forward running
+```bash
+kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80
+```
+
+### Step 2: Start Ngrok tunnel
+From another terminal:
+```bash
+ngrok http 8080 --host-header="chat-app.com"
+```
+
+### Step 3: Open the Ngrok URL
+Ngrok will print a public URL like `https://xxxxx.ngrok-free.app`. Open it in any browser.
+
+> **Why `--host-header="chat-app.com"` matters:**  
+> `k8s/ingress.yaml` only routes requests when the HTTP `Host` header is `chat-app.com`. Without this flag, Ngrok forwards the tunnel hostname instead, which doesn't match the Ingress rule and results in a 404.
+
 ## Validation Checklist
 
 Run these checks after deployment:
@@ -254,35 +548,55 @@ Expected:
 * **Cause:** cookie behavior with `secure` flag while testing over plain HTTP.
 * **Fix:** use `NODE_ENV=development` in backend deployment for local Kind HTTP testing.
 
-### 3) Backend issues from empty JWT secret
-* **Symptom:** auth flows can fail or return 500.
-* **Cause:** empty `jwt-secret` in `backend-secrets`.
-* **Fix:** create/update Kubernetes secret with a non-empty random value and restart backend pod.
+### 3) Empty JWT secret causing 500 errors
+* **Symptom:** auth flows failing with HTTP 500 errors.
+* **Cause:** `jwt-secret` key in `backend-secrets` was empty, so JWT signing threw an error.
+* **Fix:** regenerate and apply the secret with a non-empty random value, then restart the backend pod:
+```bash
+JWT_SECRET=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+kubectl -n chat-app create secret generic backend-secrets \
+  --from-literal=jwt-secret="$JWT_SECRET" \
+  --dry-run=client -o yaml | kubectl apply -f -
+kubectl -n chat-app rollout restart deployment/backend
+```
 
 ### 4) Wrong kubectl context while debugging
 * **Symptom:** `kubectl` could not reach expected cluster resources.
 * **Cause:** current context pointing to another cluster.
 * **Fix:**
-
 ```bash
 kubectl config get-contexts
 kubectl config use-context kind-kind
 kubectl cluster-info
 ```
 
+### 5) Push rejected because remote was ahead
+* **Symptom:** `git push` was rejected — remote had commits (CI manifest updates) the local branch didn't have.
+* **Cause:** the `update_k8s_manifests_images` CI job commits back to `main`, so `main` can advance while you're working locally.
+* **Fix:**
+```bash
+git fetch origin
+git pull --no-rebase origin main   # or --rebase if preferred
+git push origin main
+```
+* **Best practice going forward:** before every push, run `git fetch origin && git status -sb`. If you're behind, do `git pull --rebase origin main` first.
+
+### 6) MongoDB pods not becoming ready after migration to StatefulSet
+* **Symptom:** MongoDB pod stuck in `Pending` or `CrashLoopBackOff` after switching from Deployment to StatefulSet.
+* **Cause:** the old Deployment + ClusterIP service conflict with the new StatefulSet + headless service; or the PVC was already bound by the old Deployment.
+* **Fix:** delete the old Deployment and ClusterIP service before applying the StatefulSet and headless service. The StatefulSet manages its own PVC via `volumeClaimTemplates`.
+
 ## CI/CD Status
 
-This repository already has a strong GitHub Actions pipeline in `.github/workflows/cicd.yml`.
+This repository has a production-grade GitHub Actions pipeline in `.github/workflows/cicd.yml`.
 
-### What is implemented now (CI + image delivery)
-
-Pipeline triggers:
-* `push` to `main`
-* tag pushes like `v*.*.*`
+### Pipeline triggers
+* `push` to `main` — but **ignores changes under `k8s/**`** to prevent infinite CI loops when the pipeline itself commits manifest updates.
+* Tag pushes like `v*.*.*`
 * `pull_request`
-* manual `workflow_dispatch`
+* Manual `workflow_dispatch`
 
-Pipeline stages currently implemented:
+### Pipeline stages
 
 1. **Secret scan + lint**
    * Runs Gitleaks to detect committed secrets.
@@ -307,11 +621,17 @@ Pipeline stages currently implemented:
    * Generates SARIF reports and uploads them to GitHub Security tab.
 
 6. **Docker push (controlled)**
-   * Runs only when conditions are met (not PR, and push is allowed).
+   * Runs only on `main` / tag pushes and not on PRs.
    * Logs in to Docker Hub using repository secrets.
    * Pushes both immutable SHA tags and `latest` tags for frontend/backend.
 
-### Security controls already in place
+7. **Update Kubernetes manifests (`update_k8s_manifests_images`)** *(new job)*
+   * Runs after a successful Docker push.
+   * Uses a Python script to update the `image:` line in `k8s/frontend-deployment.yaml` and `k8s/backend-deployment.yaml` to the new `<NAMESPACE>/<IMAGE>:<SHORT_SHA>` tag.
+   * Commits and pushes the manifest changes back to `main` with `[skip ci]` in the commit message so it doesn't re-trigger the pipeline.
+   * ArgoCD (auto-sync enabled) picks up the commit and rolls out the new image to the Kind cluster.
+
+### Security controls
 
 * **Secret detection:** Gitleaks at the start of pipeline.
 * **Code security scanning:** CodeQL integrated.
@@ -319,14 +639,21 @@ Pipeline stages currently implemented:
 * **Supply chain hygiene:** immutable SHA image tags in addition to `latest`.
 * **Protected credentials:** Docker credentials and namespace via GitHub Secrets.
 * **Concurrency control:** cancels in-progress runs on same ref to avoid race conditions.
+* **CI loop prevention:** `paths-ignore: k8s/**` on the push trigger prevents the manifest-update commit from re-triggering a full CI run.
 
-### Current CD status for Kubernetes
+### End-to-end GitOps flow
 
-* **Implemented:** CI builds, scans, and publishes Docker images.
-* **Implemented:** CI updates Kubernetes manifests in `k8s/` with the new immutable image tag (short SHA) so Git changes drive rollouts.
-* **Works with ArgoCD:** when ArgoCD auto-sync is enabled, it deploys the updated manifests to your Kind cluster.
+```
+Code push to main
+  → GitHub Actions CI
+  → Build + scan + push Docker images (SHA tag)
+  → Update k8s/*-deployment.yaml with new SHA tag
+  → Commit + push manifest changes to main
+  → ArgoCD detects diff → syncs to Kind cluster
+  → Pods roll out with new image
+```
 
-In other words: **CI image delivery is production-grade, and GitOps CD is enabled via ArgoCD syncing manifest changes.**
+In other words: **CI image delivery is production-grade, and GitOps CD is fully automated via ArgoCD syncing manifest changes.**
 
 ## Contributing
 
