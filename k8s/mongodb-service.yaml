@@ -20,7 +20,6 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-options: Replace=true
 spec:
-  clusterIP: None
   selector:
     app: mongodb
   ports:

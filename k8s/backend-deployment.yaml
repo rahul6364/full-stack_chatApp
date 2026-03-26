@@ -35,7 +35,7 @@ spec:
           failureThreshold: 5
         env:
         - name: MONGODB_URI
-          value: "mongodb://root:admin@mongodb-0.mongodb:27017/chatApp?authSource=admin"
+          value: "mongodb://root:admin@mongodb:27017/chatApp?authSource=admin"
         - name: PORT
           value: "5001"
         - name: NODE_ENV
