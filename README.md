@@ -272,6 +272,8 @@ A full-stack real-time chat application built with React, Node.js/Express, Socke
 * [Environment Configuration](#environment-configuration)
 * [Quick Start (Docker Compose)](#quick-start-docker-compose)
 * [Kubernetes Deployment (Kind + ingress-nginx)](#kubernetes-deployment-kind--ingress-nginx)
+* [ArgoCD Setup (GitOps CD)](#-argocd-setup-gitops-cd)
+* [Quick Public Demo with Ngrok](#-quick-public-demo-with-ngrok)
 * [Validation Checklist](#validation-checklist)
 * [Issues Faced and Fixes](#issues-faced-and-fixes)
 * [CI/CD Status](#cicd-status)
@@ -495,6 +497,73 @@ curl -v -H "Host: chat-app.com" http://127.0.0.1:8080/api/auth/check
 ```
 
 Open browser: `http://chat-app.com:8080/`.
+
+---
+
+## 🔄 ArgoCD Setup (GitOps CD)
+
+ArgoCD is installed in the cluster and monitors this repository. When CI commits updated image tags to `k8s/*-deployment.yaml`, ArgoCD automatically syncs and rolls out the new pods.
+
+### Step 1: Install ArgoCD into the cluster
+```bash
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl -n argocd rollout status deployment/argocd-server --timeout=180s
+```
+
+### Step 2: Access the ArgoCD UI
+Port-forward in a dedicated terminal:
+```bash
+kubectl port-forward svc/argocd-server -n argocd 8081:443
+```
+Open `https://localhost:8081` in your browser (accept the self-signed certificate warning).
+
+### Step 3: Get the initial admin password
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret \
+  -o jsonpath="{.data.password}" | base64 -d && echo
+```
+Log in with username `admin` and the printed password.
+
+### Step 4: Create the ArgoCD Application
+In the ArgoCD UI click **New App**, or apply this manifest:
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: chat-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/rahul6364/full-stack_chatApp.git
+    targetRevision: main
+    path: k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: chat-app
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+```
+```bash
+kubectl apply -f argocd-app.yaml
+```
+
+### Step 5: Verify sync
+```bash
+# Check app status
+kubectl -n argocd get applications
+
+# Or via CLI (if argocd CLI is installed)
+argocd app get chat-app
+argocd app sync chat-app   # manual sync if needed
+```
+
+ArgoCD will now automatically redeploy whenever CI pushes new image tags to `k8s/*.yaml`.
+
+> **Note:** The `paths-ignore: k8s/**` in `.github/workflows/cicd.yml` prevents ArgoCD's manifest commits from re-triggering a full CI build loop.
 
 ---
 
