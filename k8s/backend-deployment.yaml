@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: rahul6364/full-stack-chatapp-backend:latest
+        image: rahul6364/full-stack-chatapp-backend:2725838
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5001
