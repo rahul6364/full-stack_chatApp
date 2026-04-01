@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
       - name: backend
-        image: rahul6364/full-stack-chatapp-backend:fef26a9
-        imagePullPolicy: Always
+        image: rahul6364/full-stack-chatapp-backend:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5001
         readinessProbe:
@@ -45,6 +45,21 @@ spec:
             secretKeyRef:
               name: backend-secrets
               key: jwt-secret
+        - name: CLOUDINARY_CLOUD_NAME
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: cloudinary-cloud-name
+        - name: CLOUDINARY_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: cloudinary-api-key
+        - name: CLOUDINARY_API_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: cloudinary-api-secret
         resources:
           limits:
             memory: "512Mi"

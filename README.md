@@ -437,17 +437,26 @@ kubectl apply -f k8s/backend-secrets.yaml -n chat-app
 
 Important: ensure JWT secret is non-empty in cluster:
 ```bash
-JWT_SECRET=$(python3 -c "import secrets; print(secrets.token_hex(32))")
-kubectl -n chat-app create secret generic backend-secrets \
+# JWT_SECRET=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+# kubectl -n chat-app create secret generic backend-secrets \
+#   --from-literal=jwt-secret="$JWT_SECRET" \
+#   --dry-run=client -o yaml | kubectl apply -f -
+kubectl delete secret backend-secrets -n chat-app
+
+JWT_SECRET=$(openssl rand -hex 32)
+
+kubectl create secret generic backend-secrets \
   --from-literal=jwt-secret="$JWT_SECRET" \
-  --dry-run=client -o yaml | kubectl apply -f -
+  -n chat-app
+
+kubectl rollout restart deployment backend -n chat-app
 ```
 
 ### Step 4: Deploy MongoDB
 ```bash
 kubectl apply -f k8s/mongodb-deployment.yaml -n chat-app
 kubectl apply -f k8s/mongodb-service.yaml -n chat-app
-kubectl -n chat-app rollout status deployment/mongodb --timeout=180s
+kubectl -n chat-app rollout status statefulset.apps/mongodb --timeout=180s
 kubectl -n chat-app get pods -l app=mongodb
 ```
 
