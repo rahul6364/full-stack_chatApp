@@ -22,9 +22,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.NODE_ENV === "production" 
-      ? ["http://localhost:8080", "http://localhost"] 
-      : "http://localhost:5173",
+    origin: ["http://chat-app.com:8080", "http://chat-app.com", "http://localhost:8080", "http://localhost:5173"],
     credentials: true,
   })
 );

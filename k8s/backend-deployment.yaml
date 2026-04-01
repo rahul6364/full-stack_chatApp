@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
       - name: backend
-        image: rahul6364/full-stack-chatapp-backend:2725838
-        imagePullPolicy: IfNotPresent
+        image: rahul6364/full-stack-chatapp-backend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5001
         readinessProbe:
@@ -39,7 +39,7 @@ spec:
         - name: PORT
           value: "5001"
         - name: NODE_ENV
-          value: "development"
+          value: "production"
         - name: JWT_SECRET
           valueFrom:
             secretKeyRef:
