@@ -1,0 +1,5 @@
+[allowlist]
+    description = "Exclude SealedSecrets manifests as they contain intentional encrypted data"
+    paths = [
+        '''k8s/sealed-secrets.yaml''',
+    ]
