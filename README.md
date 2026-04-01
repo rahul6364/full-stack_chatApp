@@ -85,6 +85,11 @@ JWT_SECRET=your_jwt_secret_key
 # Server Configuration
 PORT=5001
 NODE_ENV=production
+
+# Cloudinary Configuration (Required for Profile Pics)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 ```
 
 > **Note:** 
@@ -317,14 +322,14 @@ This project provides a scalable and production-style chat application with:
 * `ingress-nginx` is configured and routing traffic.
 * Host-based access is working through `chat-app.com`.
 * **MongoDB migrated from Deployment → StatefulSet** with a headless service (`clusterIP: None`) for stable DNS.
-* **Backend health endpoint** (`/health`) returns `503` when MongoDB is not connected, making K8s probes meaningful.
-* **Readiness + liveness probes** added to the backend deployment (HTTP GET `/health` on port 5001).
-* **Startup + readiness + liveness probes** added to MongoDB StatefulSet (TCP on port 27017).
-* **CI/CD pipeline** builds, scans, and publishes Docker images with immutable SHA tags.
-* **CI auto-updates K8s manifests** (`k8s/frontend-deployment.yaml`, `k8s/backend-deployment.yaml`) with the new image tag after each push.
-* **ArgoCD GitOps CD** is enabled — ArgoCD syncs manifest changes to the Kind cluster automatically.
-* **Ngrok tunneling** tested for public demo access without exposing ports directly.
-* **JWT secret debugging** resolved — empty secret caused 500 errors; fixed by recreating the Kubernetes secret with a properly generated value.
+* **Backend health endpoint** (`/health`) returns `503` when MongoDB is not connected.
+* **Readiness + liveness probes** added to backend and MongoDB.
+* **CI/CD pipeline** builds, scans (Trivy), and publishes Docker images.
+* **ArgoCD GitOps CD** enabled for automated manifest synchronization.
+* **Security Hardening**: Implemented **Bitnami Sealed Secrets** to securely store credentials (JWT, Cloudinary) in the public repository.
+* **Payload Support**: Increased request limits to **10MB** (Express + Nginx Ingress) for profile picture uploads.
+* **Infrastructure Optimization**: Cleaned up redundant PVCs and fixed ArgoCD health monitoring.
+* **Local K8s Auth Fix**: Optimized cookie and CORS settings for plain HTTP access via `chat-app.com:8080`.
 
 ### Not implemented yet
 
@@ -340,7 +345,7 @@ This project provides a scalable and production-style chat application with:
   * `mongo-pvc.yaml` - MongoDB PVC (used by legacy Deployment; StatefulSet manages its own PVC via `volumeClaimTemplates`)
   * `mongodb-statefullset.yaml` - **MongoDB StatefulSet** (replaces the old Deployment)
   * `mongodb-service.yaml` - **Headless service** (`clusterIP: None`) for stable MongoDB DNS
-  * `backend-secrets.yaml` - backend JWT secret
+  * `sealed-secrets.yaml` - **Encrypted secrets** (JWT, Cloudinary) managed by Bitnami Sealed Secrets
   * `backend-deployment.yaml`, `backend-service.yaml`
   * `frontend-configmap.yaml` - Nginx config for frontend container
   * `frontend-deployment.yaml`, `frontend-service.yaml`
@@ -430,27 +435,12 @@ kubectl -n ingress-nginx get pods
 ### Step 3: Create namespace and base resources
 ```bash
 kubectl apply -f k8s/namespace.yaml
-kubectl apply -f k8s/mongo-pvc.yaml -n chat-app
 kubectl apply -f k8s/frontend-configmap.yaml -n chat-app
-kubectl apply -f k8s/backend-secrets.yaml -n chat-app
+kubectl apply -f k8s/sealed-secrets.yaml -n chat-app
 ```
 
-Important: ensure JWT secret is non-empty in cluster:
-```bash
-# JWT_SECRET=$(python3 -c "import secrets; print(secrets.token_hex(32))")
-# kubectl -n chat-app create secret generic backend-secrets \
-#   --from-literal=jwt-secret="$JWT_SECRET" \
-#   --dry-run=client -o yaml | kubectl apply -f -
-kubectl delete secret backend-secrets -n chat-app
-
-JWT_SECRET=$(openssl rand -hex 32)
-
-kubectl create secret generic backend-secrets \
-  --from-literal=jwt-secret="$JWT_SECRET" \
-  -n chat-app
-
-kubectl rollout restart deployment backend -n chat-app
-```
+> [!IMPORTANT]
+> This project uses **Sealed Secrets**. Credentials are encrypted and safe for Git. To update secrets, use the `kubeseal` CLI or contact the project maintainer.
 
 ### Step 4: Deploy MongoDB
 ```bash
@@ -663,6 +653,31 @@ git push origin main
 * **Symptom:** MongoDB pod stuck in `Pending` or `CrashLoopBackOff` after switching from Deployment to StatefulSet.
 * **Cause:** the old Deployment + ClusterIP service conflict with the new StatefulSet + headless service; or the PVC was already bound by the old Deployment.
 * **Fix:** delete the old Deployment and ClusterIP service before applying the StatefulSet and headless service. The StatefulSet manages its own PVC via `volumeClaimTemplates`.
+
+### 7) 413 Payload Too Large on Image Uploads
+* **Symptom:** Uploading profile pictures failed with error 413.
+* **Cause:** Default 100kb limit in Express and 1MB limit in Nginx Ingress.
+* **Fix:** Increased `express.json({ limit: "10mb" })` and added `nginx.ingress.kubernetes.io/proxy-body-size: "10m"` to `ingress.yaml`.
+
+### 8) Cloudinary Images Blocked by CSP
+* **Symptom:** Profile pictures didn't load in the frontend.
+* **Cause:** Content Security Policy (CSP) header in `frontend/nginx.conf` restricted image sources to `'self'`.
+* **Fix:** Updated CSP to include `https://res.cloudinary.com`.
+
+### 9) GitOps Secret Management Security
+* **Symptom:** Plain-text secrets were committed or required manual `kubectl` intervention, breaking GitOps flow.
+* **Cause:** Standard K8s Secrets are base64 only, not encrypted for Git.
+* **Fix:** Integrated **Bitnami Sealed Secrets**. Encrypted manifests (`k8s/sealed-secrets.yaml`) are now safely version-controlled.
+
+### 10) Authentication Failures on Local HTTP Ingress
+* **Symptom:** Users stayed logged out or saw 500/401 errors on `chat-app.com:8080`.
+* **Cause:** JWT cookies had `secure: true` (only works on HTTPS) and CORS origins were missing.
+* **Fix:** Set `secure: false` for cookies and added `chat-app.com:8080` to CORS allowed origins.
+
+### 11) Gitleaks CI Pipeline Failures
+* **Symptom:** GitHub Actions failed on push due to "leaks" in the SealedSecret manifest.
+* **Cause:** Gitleaks identified the high-entropy encrypted blobs as potential secrets.
+* **Fix:** Added `.gitleaks.toml` to ignore the `k8s/sealed-secrets.yaml` file while maintaining protection for other source files.
 
 ## CI/CD Status
 
