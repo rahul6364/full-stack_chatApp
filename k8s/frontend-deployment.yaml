@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: rahul6364/full-stack-chatapp-frontend:9110516
+        image: rahul6364/full-stack-chatapp-frontend:af8545f
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
