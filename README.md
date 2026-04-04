@@ -444,7 +444,7 @@ kubectl apply -f k8s/sealed-secrets.yaml -n chat-app
 
 ### Step 4: Deploy MongoDB
 ```bash
-kubectl apply -f k8s/mongodb-deployment.yaml -n chat-app
+kubectl apply -f k8s/k8s/mongodb-statefullset.yaml -n chat-app
 kubectl apply -f k8s/mongodb-service.yaml -n chat-app
 kubectl -n chat-app rollout status statefulset.apps/mongodb --timeout=180s
 kubectl -n chat-app get pods -l app=mongodb
